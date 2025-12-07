@@ -3,11 +3,11 @@ This shows a simple implementation of a spin lock using load-acquire/store-relea
 Unlike the conversional spin locks that busy-loops until the condition is true(or the lock
 is acquired), make use of the WFE(Wait for Event) instruction from the hardware which parks the
 CPU. This bypasses the OS scheduler and it saves power doing so. To the OS, the thread is still 
-running, however to the hardware, the CPU is idle. There's no context switch. 
+running, however to the hardware, the CPU is idle.  
 Once the lock is available, we send a signal via sev(signal event) which wakes up the waiting CPUs.
 A spurious wake(or thuderhead) shouldnt be a problem since this is dependednt on the number of CPUs.
 
-While this seems like less work(no context switching, etc), we do hog the CPU, so the OS will not be 
+While this seems like less work, we do hog the CPU, so the OS will not be 
 able to schedule a thread on a core with a WFE thread.
 
 The glue code to run this in located in `spin_glue.c`. 
