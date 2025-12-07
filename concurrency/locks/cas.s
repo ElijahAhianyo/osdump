@@ -1,10 +1,10 @@
 /*
-This is meant to show a simple impplementation of a sompare-and-swap lock free interface.
+This is meant to show a simple implementation of a compare-and-swap lock-free interface.
 
-We exclusively retrieve or load a value from a location and and compare that with the expected
-If we're load and value is different than expected, we simply return the ol value. It is up to 
+We exclusively retrieve or load a value from a location and compare that with the expected
+If the value we loaded is different from the expected, we simply return the old value. It is up to 
 the caller to handle the output of that. Otherwise, we proceed to store the new value at the location.
-Note that ARM are weakly ordered, which means they can spuriously fail when trying to store exclusively for
+Note that ARM is weakly ordered, which means they can spuriously fail when trying to store exclusively for
 reasons other than the value changing(such as interrupts, etc), so we loop till this either works or the value
 changes.
 
