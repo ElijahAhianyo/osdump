@@ -10,12 +10,11 @@ const int MAX_THREAD_LIMIT = 15;
 
 void *worker(void *args) {
     for (int i = 0; i < MAX_NUM; i++){
-        int new, old;
+        int old;
         do{
             old = val;
-            new = old + 1;
         }
-        while(compare_and_swap(&val, old, new) != 0);
+        while(compare_and_swap(&val, old, old + 1) != old);
         
     }
     return NULL;
