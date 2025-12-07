@@ -1,9 +1,12 @@
 /*
 This is meant to show a simple impplementation of a sompare-and-swap lock free interface.
-The idea should be similar to that of the spin lock, only that we dont loop. 
+
 We exclusively retrieve or load a value from a location and and compare that with the expected
-If they match, we (exclusively) set store the new value at the given location and return 1 on failure 
-and 0 on success.
+If we're load and value is different than expected, we simply return the ol value. It is up to 
+the caller to handle the output of that. Otherwise, we proceed to store the new value at the location.
+Note that ARM are weakly ordered, which means they can spuriously fail when trying to store exclusively for
+reasons other than the value changing(such as interrupts, etc), so we loop till this either works or the value
+changes.
 
 */
 
@@ -21,11 +24,7 @@ compare_and_swap:
     cmp x1, x3
     bne 2f
     stlxr w4, x2, [x0]  // w4 = 1 means failed, 0 = success
-    mov x0, #0          // return 0 meaning success!
-    mov w0, w4
-    b done
+    cbnz w4, 1b             // Try again if this failed
 2:
-    mov x0, #1           // return 1 to the caller indicating we failed
-
-done:
+    mov x0, x3           // return the old value at the provided location
     ret 
